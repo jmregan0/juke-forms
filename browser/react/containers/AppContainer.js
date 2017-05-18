@@ -116,16 +116,16 @@ export default class AppContainer extends Component {
         this.setState({ selectedArtist: artist });
       });
   }
-    addPlaylist(name) {
-      axios.post('/api/playlists', { name })
-        .then(res => res.data)
-        .then(playlist => {
-          this.setState({
-            playlists: [...this.state.playlists,playlist]
-          })
+
+  addPlaylist(name) {
+    axios.post('/api/playlists', { name })
+      .then(res => res.data)
+      .then(playlist => {
+        this.setState({
+          playlists: [...this.state.playlists, playlist]
         })
+      })
     }
-}
 
   render() {
     return (
@@ -171,4 +171,4 @@ export default class AppContainer extends Component {
       </div>
     );
   }
-
+}

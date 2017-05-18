@@ -3,13 +3,13 @@ import React from 'react';
 const NewPlaylist = function (props) {
   return (
     <div className="well">
-      <form className="form-horizontal" onChange={props.submitFormAction}>
+      <form className="form-horizontal" onChange={props.recordPlaylistName} onSubmit={props.submitFormAction}>
         <fieldset>
           <legend>New Playlist</legend>
           <div className="form-group">
             <label className="col-xs-2 control-label">Name</label>
             <div className="col-xs-10">
-              <input className="form-control" type="text"/>
+              <input className="form-control" type="text" value={props.input}/>
             </div>
           </div>
           <div className="form-group">

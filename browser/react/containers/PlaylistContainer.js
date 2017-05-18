@@ -11,22 +11,24 @@ export default class PlaylistContainer extends React.Component {
   }
 
   recordPlaylistName(event){
-    const input = event.target.value;
-    this.setState({
-      currentValue: input
-    });
+    const currentValue = event.target.value;
+    this.setState({ input: currentValue });
   }
 
   submitFormAction(event){
-    const value = event.target.value;
-    console.log(value);
+    event.preventDefault();
+    console.log(this.state.input)
+    this.setState({input: ''})
   }
+
+
 
   render(){
     return (
       <NewPlaylist
       recordPlaylistName={this.recordPlaylistName}
       submitFormAction={this.submitFormAction}
+      input={this.state.input}
       />
     );
   }

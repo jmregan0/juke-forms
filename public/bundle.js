@@ -13749,255 +13749,10 @@ exports.default = Artist;
 
 /***/ }),
 /* 126 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 "use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(5);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _axios = __webpack_require__(130);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _initialState = __webpack_require__(154);
-
-var _initialState2 = _interopRequireDefault(_initialState);
-
-var _audio = __webpack_require__(148);
-
-var _audio2 = _interopRequireDefault(_audio);
-
-var _Albums = __webpack_require__(76);
-
-var _Albums2 = _interopRequireDefault(_Albums);
-
-var _Album = __webpack_require__(75);
-
-var _Album2 = _interopRequireDefault(_Album);
-
-var _Sidebar = __webpack_require__(152);
-
-var _Sidebar2 = _interopRequireDefault(_Sidebar);
-
-var _Player = __webpack_require__(151);
-
-var _Player2 = _interopRequireDefault(_Player);
-
-var _utils = __webpack_require__(155);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var AppContainer = function (_Component) {
-  _inherits(AppContainer, _Component);
-
-  function AppContainer(props) {
-    _classCallCheck(this, AppContainer);
-
-    var _this = _possibleConstructorReturn(this, (AppContainer.__proto__ || Object.getPrototypeOf(AppContainer)).call(this, props));
-
-    _this.state = _initialState2.default;
-
-    _this.toggle = _this.toggle.bind(_this);
-    _this.toggleOne = _this.toggleOne.bind(_this);
-    _this.next = _this.next.bind(_this);
-    _this.prev = _this.prev.bind(_this);
-    _this.selectAlbum = _this.selectAlbum.bind(_this);
-    _this.selectArtist = _this.selectArtist.bind(_this);
-    return _this;
-  }
-
-  _createClass(AppContainer, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      var _this2 = this;
-
-      var fetchAlbums = _axios2.default.get('/api/albums/').then(function (res) {
-        return res.data;
-      });
-      var fetchArtists = _axios2.default.get('/api/artists').then(function (res) {
-        return res.data;
-      });
-
-      Promise.all([fetchAlbums, fetchArtists]).then(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            albums = _ref2[0],
-            artists = _ref2[1];
-
-        _this2.onLoad((0, _utils.convertAlbums)(albums), artists);
-      });
-
-      _audio2.default.addEventListener('ended', function () {
-        return _this2.next();
-      });
-      _audio2.default.addEventListener('timeupdate', function () {
-        return _this2.setProgress(_audio2.default.currentTime / _audio2.default.duration);
-      });
-    }
-  }, {
-    key: 'onLoad',
-    value: function onLoad(albums, artists) {
-      this.setState({
-        albums: albums,
-        artists: artists
-      });
-    }
-  }, {
-    key: 'play',
-    value: function play() {
-      _audio2.default.play();
-      this.setState({ isPlaying: true });
-    }
-  }, {
-    key: 'pause',
-    value: function pause() {
-      _audio2.default.pause();
-      this.setState({ isPlaying: false });
-    }
-  }, {
-    key: 'load',
-    value: function load(currentSong, currentSongList) {
-      _audio2.default.src = currentSong.audioUrl;
-      _audio2.default.load();
-      this.setState({
-        currentSong: currentSong,
-        currentSongList: currentSongList
-      });
-    }
-  }, {
-    key: 'startSong',
-    value: function startSong(song, list) {
-      this.pause();
-      this.load(song, list);
-      this.play();
-    }
-  }, {
-    key: 'toggleOne',
-    value: function toggleOne(selectedSong, selectedSongList) {
-      if (selectedSong.id !== this.state.currentSong.id) this.startSong(selectedSong, selectedSongList);else this.toggle();
-    }
-  }, {
-    key: 'toggle',
-    value: function toggle() {
-      if (this.state.isPlaying) this.pause();else this.play();
-    }
-  }, {
-    key: 'next',
-    value: function next() {
-      this.startSong.apply(this, _toConsumableArray((0, _utils.skip)(1, this.state)));
-    }
-  }, {
-    key: 'prev',
-    value: function prev() {
-      this.startSong.apply(this, _toConsumableArray((0, _utils.skip)(-1, this.state)));
-    }
-  }, {
-    key: 'setProgress',
-    value: function setProgress(progress) {
-      this.setState({ progress: progress });
-    }
-  }, {
-    key: 'selectAlbum',
-    value: function selectAlbum(albumId) {
-      var _this3 = this;
-
-      _axios2.default.get('/api/albums/' + albumId).then(function (res) {
-        return res.data;
-      }).then(function (album) {
-        return _this3.setState({
-          selectedAlbum: (0, _utils.convertAlbum)(album)
-        });
-      });
-    }
-  }, {
-    key: 'selectArtist',
-    value: function selectArtist(artistId) {
-      var _this4 = this;
-
-      var uri = '/api/artists/' + artistId;
-      Promise.all([_axios2.default.get(uri), _axios2.default.get(uri + '/albums'), _axios2.default.get(uri + '/songs')]).then(function (responses) {
-        return responses.map(function (res) {
-          return res.data;
-        });
-      }).then(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 3),
-            artist = _ref4[0],
-            albums = _ref4[1],
-            songs = _ref4[2];
-
-        artist.albums = (0, _utils.convertAlbums)(albums);
-        artist.songs = (0, _utils.convertSongs)(songs);
-        _this4.setState({ selectedArtist: artist });
-      });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'div',
-        { id: 'main', className: 'container-fluid' },
-        _react2.default.createElement(
-          'div',
-          { className: 'col-xs-2' },
-          _react2.default.createElement(_Sidebar2.default, { deselectAlbum: this.deselectAlbum })
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: 'col-xs-10' },
-          this.props.children && _react2.default.cloneElement(this.props.children, {
-            // ALBUMS PROPS
-            albums: this.state.albums,
-
-            // ALBUM (singular) PROPS
-            selectAlbum: this.selectAlbum,
-            album: this.state.selectedAlbum,
-            currentSong: this.state.currentSong,
-            isPlaying: this.state.isPlaying,
-            toggleOne: this.toggleOne,
-
-            // ARTISTS PROPS
-            artists: this.state.artists,
-
-            // ARTIST (singular) PROPS
-            selectArtist: this.selectArtist,
-            selectedArtist: this.state.selectedArtist
-          })
-        ),
-        _react2.default.createElement(_Player2.default, {
-          currentSong: this.state.currentSong,
-          currentSongList: this.state.currentSongList,
-          isPlaying: this.state.isPlaying,
-          progress: this.state.progress,
-          next: this.next,
-          prev: this.prev,
-          toggle: this.toggle
-        })
-      );
-    }
-  }]);
-
-  return AppContainer;
-}(_react.Component);
-
-exports.default = AppContainer;
+throw new Error("Module build failed: SyntaxError: Unexpected token, expected ; (130:11)\n\n\u001b[0m \u001b[90m 128 | \u001b[39m}\n \u001b[90m 129 | \u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 130 | \u001b[39m  render() {\n \u001b[90m     | \u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 131 | \u001b[39m    \u001b[36mreturn\u001b[39m (\n \u001b[90m 132 | \u001b[39m      \u001b[33m<\u001b[39m\u001b[33mdiv\u001b[39m id\u001b[33m=\u001b[39m\u001b[32m\"main\"\u001b[39m className\u001b[33m=\u001b[39m\u001b[32m\"container-fluid\"\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 133 | \u001b[39m        \u001b[33m<\u001b[39m\u001b[33mdiv\u001b[39m className\u001b[33m=\u001b[39m\u001b[32m\"col-xs-2\"\u001b[39m\u001b[33m>\u001b[39m\u001b[0m\n");
 
 /***/ }),
 /* 127 */
@@ -14099,6 +13854,10 @@ var _NewPlaylist = __webpack_require__(150);
 
 var _NewPlaylist2 = _interopRequireDefault(_NewPlaylist);
 
+var _axios = __webpack_require__(130);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14115,10 +13874,15 @@ var PlaylistContainer = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (PlaylistContainer.__proto__ || Object.getPrototypeOf(PlaylistContainer)).call(this, props));
 
-    _this.state = { input: '' };
+    _this.state = {
+      input: '',
+      isDirty: false
+    };
 
     _this.recordPlaylistName = _this.recordPlaylistName.bind(_this);
     _this.submitFormAction = _this.submitFormAction.bind(_this);
+    _this.inputValidate = _this.inputValidate.bind(_this);
+    _this.lengthWarning = _this.lengthWarning.bind(_this);
     return _this;
   }
 
@@ -14126,14 +13890,33 @@ var PlaylistContainer = function (_React$Component) {
     key: 'recordPlaylistName',
     value: function recordPlaylistName(event) {
       var currentValue = event.target.value;
-      this.setState({ input: currentValue });
+      this.setState({ input: currentValue, isDirty: true });
     }
   }, {
     key: 'submitFormAction',
     value: function submitFormAction(event) {
       event.preventDefault();
-      console.log(this.state.input);
-      this.setState({ input: '' });
+      this.props.addPlaylist(this.state.input);
+      this.setState({ input: '', isDirty: false });
+    }
+  }, {
+    key: 'inputValidate',
+    value: function inputValidate(event) {
+      return !this.state.input.length || this.state.input.length > 16;
+    }
+  }, {
+    key: 'lengthWarning',
+    value: function lengthWarning() {
+      if (this.state.input.length > 16) return _react2.default.createElement(
+        'div',
+        { className: 'alert alert-warning' },
+        ' Your playlist name is too long!'
+      );
+      if (this.state.isDirty && !this.state.input.length) return _react2.default.createElement(
+        'div',
+        { className: 'alert alert-warning' },
+        ' Please Enter a Playlist name '
+      );
     }
   }, {
     key: 'render',
@@ -14141,7 +13924,9 @@ var PlaylistContainer = function (_React$Component) {
       return _react2.default.createElement(_NewPlaylist2.default, {
         recordPlaylistName: this.recordPlaylistName,
         submitFormAction: this.submitFormAction,
-        input: this.state.input
+        input: this.state.input,
+        inputValidate: this.inputValidate,
+        lengthWarning: this.lengthWarning
       });
     }
   }]);
@@ -15003,19 +14788,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 148 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var AUDIO = document.createElement('audio');
-exports.default = AUDIO;
-
-/***/ }),
+/* 148 */,
 /* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15089,7 +14862,8 @@ var NewPlaylist = function NewPlaylist(props) {
           _react2.default.createElement(
             "div",
             { className: "col-xs-10" },
-            _react2.default.createElement("input", { className: "form-control", type: "text", value: props.input })
+            _react2.default.createElement("input", { className: "form-control", type: "text", value: props.input }),
+            props.lengthWarning()
           )
         ),
         _react2.default.createElement(
@@ -15100,7 +14874,7 @@ var NewPlaylist = function NewPlaylist(props) {
             { className: "col-xs-10 col-xs-offset-2" },
             _react2.default.createElement(
               "button",
-              { type: "submit", className: "btn btn-success" },
+              { type: "submit", className: "btn btn-success", disabled: props.inputValidate() },
               "Create Playlist"
             )
           )
@@ -15113,148 +14887,8 @@ var NewPlaylist = function NewPlaylist(props) {
 exports.default = NewPlaylist;
 
 /***/ }),
-/* 151 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(5);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Player = function Player(props) {
-
-  var currentSong = props.currentSong;
-  var currentSongList = props.currentSongList;
-  var isPlaying = props.isPlaying;
-  var progress = props.progress;
-  var prev = props.prev;
-  var toggle = props.toggle;
-  var next = props.next;
-
-  return _react2.default.createElement(
-    'footer',
-    null,
-    _react2.default.createElement(
-      'div',
-      { style: !currentSong.id ? { display: 'none' } : null },
-      _react2.default.createElement(
-        'div',
-        { className: 'pull-left' },
-        _react2.default.createElement(
-          'button',
-          { className: 'btn btn-default', onClick: prev },
-          _react2.default.createElement('span', { className: 'glyphicon glyphicon-step-backward' })
-        ),
-        _react2.default.createElement(
-          'button',
-          { className: 'btn btn-default', onClick: toggle },
-          _react2.default.createElement('span', { className: isPlaying ? 'glyphicon glyphicon-pause' : 'glyphicon glyphicon-play' })
-        ),
-        _react2.default.createElement(
-          'button',
-          { className: 'btn btn-default', onClick: next },
-          _react2.default.createElement('span', { className: 'glyphicon glyphicon-step-forward' })
-        )
-      ),
-      _react2.default.createElement(
-        'div',
-        { className: 'bar' },
-        _react2.default.createElement(
-          'div',
-          { className: 'progress' },
-          _react2.default.createElement('div', { className: 'progress-bar', style: { width: progress * 100 + '%' } })
-        )
-      )
-    )
-  );
-};
-
-exports.default = Player;
-
-/***/ }),
-/* 152 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _react = __webpack_require__(5);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRouter = __webpack_require__(32);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Sidebar = function Sidebar(props) {
-  return _react2.default.createElement(
-    'sidebar',
-    null,
-    _react2.default.createElement('img', { src: 'juke.svg', className: 'logo' }),
-    _react2.default.createElement(
-      'section',
-      null,
-      _react2.default.createElement(
-        'h4',
-        { className: 'menu-item active' },
-        _react2.default.createElement(
-          _reactRouter.Link,
-          { to: '/albums' },
-          'ALBUMS'
-        )
-      )
-    ),
-    _react2.default.createElement(
-      'section',
-      null,
-      _react2.default.createElement(
-        'h4',
-        { className: 'menu-item' },
-        _react2.default.createElement(
-          _reactRouter.Link,
-          { to: '/artists' },
-          'ARTISTS'
-        )
-      )
-    ),
-    _react2.default.createElement('hr', null),
-    _react2.default.createElement(
-      'section',
-      null,
-      _react2.default.createElement(
-        'h4',
-        { className: 'text-muted' },
-        'PLAYLISTS'
-      ),
-      _react2.default.createElement(
-        'h4',
-        null,
-        _react2.default.createElement(
-          _reactRouter.Link,
-          { className: 'btn btn-primary btn-block', to: 'newPlaylist' },
-          _react2.default.createElement('span', { className: 'glyphicon glyphicon-plus' }),
-          ' PLAYLIST'
-        )
-      )
-    )
-  );
-};
-
-exports.default = Sidebar;
-
-/***/ }),
+/* 151 */,
+/* 152 */,
 /* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15328,78 +14962,8 @@ var router = _react2.default.createElement(
 _reactDom2.default.render(router, document.getElementById('app'));
 
 /***/ }),
-/* 154 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var initialState = {
-  albums: [],
-  selectedAlbum: {},
-  artists: [],
-  selectedArtist: {},
-  currentSong: {},
-  currentSongList: [],
-  isPlaying: false,
-  progress: 0
-};
-
-exports.default = initialState;
-
-/***/ }),
-/* 155 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var convertSong = exports.convertSong = function convertSong(song) {
-  song.audioUrl = "/api/songs/" + song.id + "/audio";
-  return song;
-};
-
-var convertSongs = exports.convertSongs = function convertSongs(songs) {
-  return songs.map(function (song) {
-    return convertSong(song);
-  });
-};
-
-var convertAlbum = exports.convertAlbum = function convertAlbum(album) {
-  album.imageUrl = "/api/albums/" + album.id + "/image";
-  album.songs = album.songs.map(convertSong);
-  return album;
-};
-
-var convertAlbums = exports.convertAlbums = function convertAlbums(albums) {
-  return albums.map(function (album) {
-    return convertAlbum(album);
-  });
-};
-
-var mod = function mod(num, m) {
-  return (num % m + m) % m;
-};
-
-var skip = exports.skip = function skip(interval, _ref) {
-  var currentSongList = _ref.currentSongList,
-      currentSong = _ref.currentSong;
-
-  var idx = currentSongList.map(function (song) {
-    return song.id;
-  }).indexOf(currentSong.id);
-  idx = mod(idx + interval, currentSongList.length);
-  var next = currentSongList[idx];
-  return [next, currentSongList];
-};
-
-/***/ }),
+/* 154 */,
+/* 155 */,
 /* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
